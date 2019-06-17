@@ -13,7 +13,7 @@ class Thread extends Model
     /**
      * @var array
      */
-    protected $guard = [];
+    protected $guarded = [];
 
     /**
      * @return string

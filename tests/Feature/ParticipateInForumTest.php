@@ -12,17 +12,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ParticipateInForumTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, RefreshDatabase;
     
     /** @test */
     public function an_authenticated_user_may_participate_in_forum()
     {
         $this->withoutExceptionHandling();
-        $user = factory(User::class)->create();
+        $user = create(User::class);
         $this->signIn($user);
 
-        $thread = factory(Thread::class)->create();
-        $reply = factory(Reply::class)->make(['thread_id' => $thread->id, 'user_id'=>$user->id]);
+        $thread = create(Thread::class);
+        $reply = make(Reply::class, ['thread_id' => $thread->id, 'user_id'=>$user->id]);
 
         $this->post($thread->path() . '/replies', $reply->toArray());
 
@@ -34,10 +34,10 @@ class ParticipateInForumTest extends TestCase
     /** @test */
     public function unauthenticated_user_may_not_participate_in_forum()
     {
-        $user = factory(User::class)->create();
+        $user = create(User::class);
 
-        $thread = factory(Thread::class)->create();
-        $reply = factory(Reply::class)->make(['thread_id' => $thread->id, 'user_id'=>$user->id]);
+        $thread = create(Thread::class);
+        $reply = make(Reply::class, ['thread_id' => $thread->id, 'user_id'=>$user->id]);
 
         $this->post($thread->path() . '/replies', $reply->toArray())
             ->assertRedirect('/login');

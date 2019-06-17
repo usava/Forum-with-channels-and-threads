@@ -7,7 +7,7 @@ use App\Thread;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 
-class ThreadsTest extends TestCase
+class ReadThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -17,7 +17,7 @@ class ThreadsTest extends TestCase
     {
         parent::setUp();
 
-        $this->thread = factory(Thread::class)->create();
+        $this->thread = create(Thread::class);
     }
 
     /** @test */
@@ -38,7 +38,7 @@ class ThreadsTest extends TestCase
     /** @test */
     public function a_user_can_read_replies_tha_are_associated_with_a_thread()
     {
-        $reply = factory(Reply::class)->create(['thread_id' => $this->thread->id]);
+        $reply = create(Reply::class, ['thread_id' => $this->thread->id]);
 
         $this->get($this->thread->path())
             ->assertSee($reply->body);
