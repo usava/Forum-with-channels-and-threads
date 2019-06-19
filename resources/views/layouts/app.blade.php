@@ -23,9 +23,14 @@
         body {
             padding-bottom: 100px;
         }
-        .level{
+
+        .level {
             display: flex;
             align-items: center;
+        }
+
+        .flex {
+            flex: 1;
         }
     </style>
 </head>
@@ -98,7 +103,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                           document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
                                 </a>
 

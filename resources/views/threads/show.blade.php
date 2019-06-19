@@ -6,7 +6,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <a href="#">{{ $thread->creator->name }}</a> posted: {{ $thread->title }}
+                        <a href="{{ route('profile', $thread->creator) }}">{{ $thread->creator->name }}</a> posted: {{ $thread->title }}
                     </div>
 
                     <div class="card-body">
@@ -19,7 +19,7 @@
                 @endforeach
 
                 <p>{{ $replies->links() }}</p>
-                
+
                 @if(auth()->check())
                     <div class="row justify-content-left" style="margin-top: 30px;">
                         <div class="col-md-8">

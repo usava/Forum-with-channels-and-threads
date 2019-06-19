@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Reply extends Model
 {
+
+    use Favoritable;
+
     /**
      * @var array
      */
@@ -19,6 +22,8 @@ class Reply extends Model
     /**
      * @var int
      */
+
+    protected $with = ['owner', 'favorites'];
 
     /**
      * @return BelongsTo
@@ -28,16 +33,4 @@ class Reply extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * @return MorphMany
-     */
-    public function favorites()
-    {
-        return $this->morphMany(Favorite::class, 'favorited');
-    }
-
-    public function favorite()
-    {
-        return $this->favorites()->create(['user_id' => auth()->id()]);
-    }
 }

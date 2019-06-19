@@ -2,24 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Favorite;
-use App\Reply;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class FavoritesController extends Controller
+class ProfilesController extends Controller
 {
-    /**
-     * FavoritesController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -29,7 +21,7 @@ class FavoritesController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -39,31 +31,33 @@ class FavoritesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Reply $reply
-     * @return void
+     * @param Request $request
+     * @return Response
      */
-    public function store(Reply $reply)
+    public function store(Request $request)
     {
-        $reply->favorite();
-        return back();
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return  Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return view('profiles.show', [
+            'profileUser' => $user,
+            'threads' => $user->threads()->paginate(10)
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -73,9 +67,9 @@ class FavoritesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -86,7 +80,7 @@ class FavoritesController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {

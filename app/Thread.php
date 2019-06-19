@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Thread
@@ -14,6 +16,8 @@ class Thread extends Model
      * @var array
      */
     protected $guarded = [];
+
+    protected $with = ['creator', 'channel'];
 
     /**
      *
@@ -36,7 +40,7 @@ class Thread extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function replies()
     {
@@ -44,7 +48,7 @@ class Thread extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function creator()
     {
