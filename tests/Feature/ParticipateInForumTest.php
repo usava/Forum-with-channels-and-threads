@@ -13,7 +13,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class ParticipateInForumTest extends TestCase
 {
     use DatabaseMigrations, RefreshDatabase;
-    
+
+    protected $thread;
+
+    public function setUp() : void
+    {
+        parent::setUp();
+
+        $this->thread = create(Thread::class);
+    }
     /** @test */
     public function an_authenticated_user_may_participate_in_forum()
     {
@@ -21,13 +29,11 @@ class ParticipateInForumTest extends TestCase
         $user = create(User::class);
         $this->signIn($user);
 
-        $thread = create(Thread::class);
-        $reply = make(Reply::class, ['thread_id' => $thread->id, 'user_id'=>$user->id]);
+        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id'=>$user->id]);
 
-        $this->post($thread->path() . '/replies', $reply->toArray());
+        $this->post($this->thread->path() . '/replies', $reply->toArray());
 
-
-        $this->get($thread->path())
+        $this->get($this->thread->path())
             ->assertSee($reply->body);
     }
 
@@ -36,10 +42,20 @@ class ParticipateInForumTest extends TestCase
     {
         $user = create(User::class);
 
-        $thread = create(Thread::class);
-        $reply = make(Reply::class, ['thread_id' => $thread->id, 'user_id'=>$user->id]);
+        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id'=>$user->id]);
 
-        $this->post($thread->path() . '/replies', $reply->toArray())
+        $this->post($this->thread->path() . '/replies', $reply->toArray())
             ->assertRedirect('/login');
+    }
+
+    /** @test */
+    public function a_reply_requires_a_body()
+    {
+        $this->signIn();
+
+        $reply = make(Reply::class, ['body'=>null]);
+
+        $this->post($this->thread->path() . '/replies', $reply->toArray())
+            ->assertSessionHasErrors('body');
     }
 }

@@ -9,7 +9,7 @@
 
                     <div class="card-body">
                         @foreach ($threads as $thread)
-                            <article>
+                            <article class="m-3 p-2">
                                 <h4>
                                     <a href="{{ $thread->path() }}">
                                         {{ $thread->title }}

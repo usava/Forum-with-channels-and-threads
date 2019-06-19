@@ -16,11 +16,23 @@ class Thread extends Model
     protected $guarded = [];
 
     /**
+     *
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('replyCount', function ($builder) {
+            $builder->withCount('replies');
+        });
+    }
+
+    /**
      * @return string
      */
     public function path()
     {
-        return '/threads/' . $this->id;
+        return "/threads/{$this->channel->slug}/{$this->id}";
     }
 
     /**
@@ -47,5 +59,15 @@ class Thread extends Model
     {
         $this->replies()->create($reply);
         return $this;
+    }
+
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class);
+    }
+
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->apply($query);
     }
 }
