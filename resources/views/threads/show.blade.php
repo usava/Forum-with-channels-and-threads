@@ -17,7 +17,9 @@
                 @foreach($replies as $reply)
                     @include('threads._reply')
                 @endforeach
+
                 <p>{{ $replies->links() }}</p>
+                
                 @if(auth()->check())
                     <div class="row justify-content-left" style="margin-top: 30px;">
                         <div class="col-md-8">

@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class ThreadFilters extends Filters
 {
 
-    protected $filters = ['by'];
+    protected $filters = ['by', 'popular'];
 
     /**
      * Filter the query by username
@@ -24,5 +24,16 @@ class ThreadFilters extends Filters
         $user = User::where('name', $username)->firstOrFail();
 
         return $this->builder->where('user_id', $user->id);
+    }
+
+    /**
+     * Filter the query by popularity
+     * @param int $a
+     * @return mixed
+     */
+    public function popular()
+    {
+        $this->builder->getQuery()->orders = [];
+        return $this->builder->orderBy('replies_count', 'desc');
     }
 }
