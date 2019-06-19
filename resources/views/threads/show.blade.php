@@ -11,11 +11,13 @@
                                 <a href="{{ route('profile', $thread->creator) }}">{{ $thread->creator->name }}</a> posted: {{ $thread->title }}
                             </span>
 
-                            <form action="{{ $thread->path() }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-link">Delete Thread</button>
-                            </form>
+                            @can('update', $thread)
+                                <form action="{{ $thread->path() }}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link">Delete Thread</button>
+                                </form>
+                            @endcan
                         </div>
 
                     </div>
@@ -54,10 +56,12 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                       <p>
-                           This thread was published {{ $thread->created_at->diffForHumans() }} by <a href="#">{{ $thread->creator->name }}</a>
-                           and currently has {{ $thread->replies_count }} {{ str_plural('commment', $thread->replies_count) }}.
-                       </p>
+                        <p>
+                            This thread was published {{ $thread->created_at->diffForHumans() }} by <a
+                                href="#">{{ $thread->creator->name }}</a>
+                            and currently
+                            has {{ $thread->replies_count }} {{ str_plural('commment', $thread->replies_count) }}.
+                        </p>
                     </div>
                 </div>
             </div>
