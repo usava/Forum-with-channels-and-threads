@@ -15,7 +15,12 @@ trait Favoritable
      */
     public function isFavorited()
     {
-        return !!$this->favorites->where('user_id', auth()->id())->count();
+        return !! $this->favorites->where('user_id', auth()->id())->count();
+    }
+
+    public function getIsFavoritedAttribute()
+    {
+        return $this->isFavorited();
     }
 
     /**
@@ -39,8 +44,18 @@ trait Favoritable
      */
     public function favorite()
     {
-        if (!$this->favorites()->where(['user_id' => auth()->id()])->exists()) {
-            return $this->favorites()->create(['user_id' => auth()->id()]);
+        $attributes = ['user_id' => auth()->id()];
+        if (!$this->favorites()->where($attributes)->exists()) {
+            return $this->favorites()->create($attributes);
         }
+    }
+
+    /**
+     * @return Model
+     */
+    public function unfavorite()
+    {
+        $attributes = ['user_id' => auth()->id()];
+        return $this->favorites()->where($attributes)->delete();
     }
 }

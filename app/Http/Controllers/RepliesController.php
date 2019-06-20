@@ -11,6 +11,10 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Class RepliesController
+ * @package App\Http\Controllers
+ */
 class RepliesController extends Controller
 {
 
@@ -44,6 +48,18 @@ class RepliesController extends Controller
     }
 
     /**
+     * @param Reply $reply
+     * @return void
+     * @throws AuthorizationException
+     */
+    public function update(Reply $reply)
+    {
+        $this->authorize('update', $reply);
+
+        $reply->update(request(['body']));
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param Reply $reply
@@ -55,6 +71,10 @@ class RepliesController extends Controller
         $this->authorize('update', $reply);
 
         $reply->delete();
+
+        if(request()->expectsJson()) {
+            return response(['status' => 'Reply deleted']);
+        }
 
         return redirect('/threads');
     }

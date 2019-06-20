@@ -1,33 +1,35 @@
-<div id="reply-{{ $reply->id }}" class="card">
-    <div class="card-header">
-        <div class="level d-flex align-items-center">
-            <h5 class="flex-grow-1">
-                <a href="{{ route('profile', $reply->owner) }}">{{ $reply->owner->name }}</a>
-                said {{ $reply->created_at->diffForHumans() }}
-            </h5>
+<reply :attributes="{{ $reply }}" inline-template v-cloak>
+    <div id="reply-{{ $reply->id }}" class="card">
+        <div class="card-header">
+            <div class="level d-flex align-items-center">
+                <h5 class="flex-grow-1">
+                    <a href="{{ route('profile', $reply->owner) }}">{{ $reply->owner->name }}</a>
+                    said {{ $reply->created_at->diffForHumans() }}
+                </h5>
 
-            <div>
-
-                <form action="/replies/{{ $reply->id }}/favorites" method="post">
-                    @csrf
-                    <button class="btn btn-default" {{ $reply->isFavorited() ? 'disabled' : ''}}>
-                        {{ $reply->favorites_count }} {{ str_plural('Favorite', $reply->favorites_count) }}
-                    </button>
-                </form>
+                <div>
+                    <favorite :reply="{{ $reply }}"></favorite>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="card-body">
-        {{ $reply->body }}
-    </div>
+        <div class="card-body">
+            <div v-if="editing">
+                <div class="form-group">
+                    <textarea class="form-control" v-model="body"></textarea>
+                </div>
+                <button class="btn btn-sm btn-primary" @click="update">Update</button>
+                <button class="btn btn-sm btn-link" @click="editing = false">Cancel</button>
+            </div>
 
-    @can('update', $reply)
-    <div class="card-footer">
-        <form action="/replies/{{$reply->id}}" method="post">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger btn-xs">Delete</button>
-        </form>
+            <div v-else v-text="body">{{ $reply->body }}</div>
+        </div>
+
+        @can('update', $reply)
+            <div class="card-footer level">
+                <button class="btn btn-warning btn-sm mr-2" @click="editing =! editing">Edit</button>
+                <button class="btn btn-danger btn-sm" @click="destroy">Delete</button>
+
+            </div>
+        @endcan
     </div>
-    @endcan
-</div>
+</reply>
