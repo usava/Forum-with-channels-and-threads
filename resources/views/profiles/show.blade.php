@@ -12,7 +12,7 @@
                 </div>
                 <div class="row justify-content-left">
                     <div class="col-md-12">
-                        @foreach($activities as $date => $records)
+                        @forelse($activities as $date => $records)
                             <h3 class="page-header">{{ $date }}</h3>
 
                             @foreach($records as $activity)
@@ -20,10 +20,10 @@
                                     @include("profiles.activities.{$activity->type}")
                                 @endif
                             @endforeach
-                        @endforeach
+                        @empty
+                          <p>There is no activity for this user.</p>
+                        @endforelse
                     </div>
-
-{{--                    <p>{{ $activities->links() }}</p>--}}
 
                 </div>
             </div>
