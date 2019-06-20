@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Favorite
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Favorite extends Model
 {
+    use RecordsActivity;
     /**
      * @var array
      */
@@ -17,5 +19,14 @@ class Favorite extends Model
     /**
      * @var int
      */
+
+    /**
+     * @return MorphTo
+     */
+    public function favorited()
+    {
+        return $this->morphTo();
+
+    }
 
 }

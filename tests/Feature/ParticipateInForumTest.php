@@ -16,12 +16,13 @@ class ParticipateInForumTest extends TestCase
 
     protected $thread;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->thread = create(Thread::class);
     }
+
     /** @test */
     public function an_authenticated_user_may_participate_in_forum()
     {
@@ -29,7 +30,7 @@ class ParticipateInForumTest extends TestCase
         $user = create(User::class);
         $this->signIn($user);
 
-        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id'=>$user->id]);
+        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id' => $user->id]);
 
         $this->post($this->thread->path() . '/replies', $reply->toArray());
 
@@ -42,7 +43,7 @@ class ParticipateInForumTest extends TestCase
     {
         $user = create(User::class);
 
-        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id'=>$user->id]);
+        $reply = make(Reply::class, ['thread_id' => $this->thread->id, 'user_id' => $user->id]);
 
         $this->post($this->thread->path() . '/replies', $reply->toArray())
             ->assertRedirect('/login');
@@ -53,9 +54,38 @@ class ParticipateInForumTest extends TestCase
     {
         $this->signIn();
 
-        $reply = make(Reply::class, ['body'=>null]);
+        $reply = make(Reply::class, ['body' => null]);
 
         $this->post($this->thread->path() . '/replies', $reply->toArray())
             ->assertSessionHasErrors('body');
     }
+
+
+    /** @test */
+    public function unauthorized_user_may_not_delete_a_reply()
+    {
+        $reply = create(Reply::class);
+
+        $this->delete('replies/' . $reply->id)
+            ->assertRedirect('/login');
+
+        $this->signIn();
+        $this->delete('replies/' . $reply->id)
+            ->assertStatus(403);
+
+    }
+
+    /** @test */
+    public function authorized_user_can_delete_a_reply()
+    {
+        $this->signIn();
+        $reply = create(Reply::class, ['user_id' => auth()->id()]);
+
+        $this->delete('replies/' . $reply->id)
+            ->assertStatus(302);
+
+        $this->assertDatabaseMissing('replies', $reply->toArray());
+    }
+
+
 }

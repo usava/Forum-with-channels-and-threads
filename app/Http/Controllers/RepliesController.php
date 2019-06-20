@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Reply;
 use App\Thread;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Validation\ValidationException;
 
@@ -38,5 +41,21 @@ class RepliesController extends Controller
 
         return redirect($thread->path())
             ->with('flash', 'Your reply has been sent');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Reply $reply
+     * @return Response
+     * @throws AuthorizationException
+     */
+    public function destroy(Reply $reply)
+    {
+        $this->authorize('update', $reply);
+
+        $reply->delete();
+
+        return redirect('/threads');
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Activity
@@ -32,7 +33,7 @@ class Activity extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return MorphTo
      */
     public function subject()
     {
