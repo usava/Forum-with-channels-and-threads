@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Thread extends Model
 {
+    use RecordsActivity;
     /**
      * @var array
      */
@@ -31,7 +32,7 @@ class Thread extends Model
         });
 
         static::deleting(function($thread) {
-            $thread->replies()->delete();
+            $thread->replies->each->delete();
         });
     }
 

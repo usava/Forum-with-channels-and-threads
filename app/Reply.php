@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Reply extends Model
 {
 
-    use Favoritable;
+    use Favoritable, RecordsActivity;
 
     /**
      * @var array
@@ -31,6 +31,11 @@ class Reply extends Model
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function thread()
+    {
+        return $this->belongsTo(Thread::class);
     }
 
 }

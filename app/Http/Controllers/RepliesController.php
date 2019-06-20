@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Thread;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
+use Illuminate\Validation\ValidationException;
 
 class RepliesController extends Controller
 {
@@ -19,7 +22,8 @@ class RepliesController extends Controller
     /**
      * @param $channelId
      * @param Thread $thread
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
+     * @throws ValidationException
      */
     public function store($channelId, Thread $thread)
     {
@@ -32,6 +36,7 @@ class RepliesController extends Controller
             'user_id' => auth()->id()
         ]);
 
-        return redirect($thread->path());
+        return redirect($thread->path())
+            ->with('flash', 'Your reply has been sent');
     }
 }

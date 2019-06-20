@@ -12,24 +12,16 @@
                 </div>
                 <div class="row justify-content-left">
                     <div class="col-md-12">
-                        @foreach($threads as $thread)
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="level">
-                                        <span class="flex">
-                                            <a href="{{ $thread->path() }}">{{ $thread->title }}</a> </span>
-                                        <span>{{ $thread->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </div>
+                        @foreach($activities as $date => $records)
+                            <h3 class="page-header">{{ $date }}</h3>
 
-                                <div class="card-body">
-                                    {{ $thread->body }}
-                                </div>
-                            </div>
+                            @foreach($records as $activity)
+                                @include("profiles.activities.{$activity->type}")
+                            @endforeach
                         @endforeach
                     </div>
 
-                    <p>{{ $threads->links() }}</p>
+{{--                    <p>{{ $activities->links() }}</p>--}}
 
                 </div>
             </div>
