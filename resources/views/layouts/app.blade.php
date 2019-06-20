@@ -10,6 +10,12 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
+    <script>
+        window.App = {!! json_encode([
+            'signedIn' => Auth::check(),
+            'user' =>  Auth::user()
+         ]) !!};
+    </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
@@ -33,7 +39,9 @@
             flex: 1;
         }
 
-        [v-cloak] { display: none; }
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <body style="">
