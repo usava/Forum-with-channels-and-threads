@@ -13,6 +13,6 @@ abstract class TestCase extends BaseTestCase
         $user = $user ?? create(\App\User::class);
         $this->actingAs($user);
 
-        return $this;
+        return $user;
     }
 }

@@ -6,6 +6,7 @@ use App\Channel;
 use App\User;
 use App\Thread;
 use App\Reply;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
@@ -60,3 +61,17 @@ $factory->define(Channel::class, function ($faker){
         'slug' => $name
     ];
 });
+
+$factory->define(DatabaseNotification::class, function ($faker){
+    return [
+        'id' => Str::uuid()->toString(),
+        'notifiable_id' => function() {
+            return auth()->id() ?? factory(User::class)->create()->id;
+        },
+        'type' => 'App\Notifications\ThreadWasUpdate',
+        'notifiable_type' => 'App\User',
+        'data' => ['foo' => 'bar']
+    ];
+});
+
+

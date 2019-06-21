@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +22,11 @@ class Thread extends Model
     /**
      * @var array
      */
+    protected $appends = ['isSubscribedTo'];
+
+    /**
+     * @var array
+     */
     protected $with = ['creator', 'channel'];
 
     /**
@@ -30,7 +36,7 @@ class Thread extends Model
     {
         parent::boot();
 
-        static::deleting(function($thread) {
+        static::deleting(function ($thread) {
             $thread->replies->each->delete();
         });
     }
@@ -60,12 +66,21 @@ class Thread extends Model
     }
 
     /**
+     * Add a reply for thread
+     *
      * @param $reply
      * @return $this
      */
     public function addReply($reply)
     {
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        $this->subscriptions->filter(function ($sub) use ($reply) {
+                return $sub->user_id != $reply->user_id;
+            })
+            ->each->notify($reply);
+
+        return $reply;
     }
 
     /**
@@ -74,6 +89,50 @@ class Thread extends Model
     public function channel()
     {
         return $this->belongsTo(Channel::class);
+    }
+
+    /**
+     * @param null $userId
+     * @return Model
+     */
+    public function subscribe($userId = null)
+    {
+        $this->subscriptions()->create([
+            'user_id' => $userId ?? auth()->id()
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * @param null $userId
+     * @return mixed
+     */
+    public function unsubscribe($userId = null)
+    {
+        return $this->subscriptions()
+            ->where([
+                'user_id' => $userId ?? auth()->id()
+            ])
+            ->delete();
+    }
+
+    /**
+     *
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsSubscribedToAttribute()
+    {
+        return $this->subscriptions()
+            ->where('user_id', auth()->id())
+            ->exists();
     }
 
     /**

@@ -53,4 +53,32 @@ class ThreadTest extends TestCase
     {
         $this->assertEquals( "/threads/{$this->thread->channel->slug}/{$this->thread->id}", $this->thread->path());
     }
+
+    /** @test */
+    public function a_thread_can_be_subscribed_to()
+    {
+        $this->signIn();
+
+        $this->thread->subscribe();
+        $this->assertEquals(1, $this->thread->subscriptions()->where('user_id', auth()->id())->count());
+    }
+
+    /** @test */
+    public function a_thread_can_be_unsubscribed_from()
+    {
+        $this->signIn();
+
+        $this->thread->unsubscribe();
+        $this->assertEquals(0, $this->thread->subscriptions()->where('user_id', auth()->id())->count());
+    }
+    
+    /** @test */
+    public function it_knows_if_an_authenticated_user_subscribed_to_it()
+    {
+        $this->signIn();
+
+        $this->assertFalse($this->thread->isSubscribedTo);
+        $this->thread->subscribe();
+        $this->assertTrue($this->thread->isSubscribedTo);
+    }
 }
