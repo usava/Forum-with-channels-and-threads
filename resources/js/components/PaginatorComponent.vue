@@ -26,7 +26,7 @@
         watch: {
             dataSet() {
                 this.page = this.dataSet.current_page;
-                this.totalPages = this.dataSet.total;
+                this.totalPages = Math.ceil(this.dataSet.total/this.dataSet.per_page);
                 this.prevUrl = this.dataSet.prev_page_url;
                 this.nextUrl = this.dataSet.next_page_url;
             },

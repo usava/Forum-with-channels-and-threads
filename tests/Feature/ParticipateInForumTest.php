@@ -34,8 +34,8 @@ class ParticipateInForumTest extends TestCase
 
         $this->post($this->thread->path() . '/replies', $reply->toArray());
 
-        $this->get($this->thread->path())
-            ->assertSee($reply->body);
+        $this->assertDatabaseHas('replies', $reply->only('body'));
+        $this->assertEquals(1, $this->thread->fresh()->replies_count);
     }
 
     /** @test */
@@ -84,7 +84,8 @@ class ParticipateInForumTest extends TestCase
         $this->delete('replies/' . $reply->id)
             ->assertStatus(302);
 
-        $this->assertDatabaseMissing('replies', $reply->toArray());
+        $this->assertDatabaseMissing('replies', $reply->only('id'));;
+        $this->assertEquals(0, $this->thread->fresh()->replies_count);
     }
 
     /** @test */

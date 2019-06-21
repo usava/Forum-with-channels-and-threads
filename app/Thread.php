@@ -18,6 +18,9 @@ class Thread extends Model
      */
     protected $guarded = [];
 
+    /**
+     * @var array
+     */
     protected $with = ['creator', 'channel'];
 
     /**
@@ -26,10 +29,6 @@ class Thread extends Model
     protected static function boot()
     {
         parent::boot();
-
-        static::addGlobalScope('replyCount', function ($builder) {
-            $builder->withCount('replies');
-        });
 
         static::deleting(function($thread) {
             $thread->replies->each->delete();
@@ -69,11 +68,19 @@ class Thread extends Model
         return $this->replies()->create($reply);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function channel()
     {
         return $this->belongsTo(Channel::class);
     }
 
+    /**
+     * @param $query
+     * @param $filters
+     * @return mixed
+     */
     public function scopeFilter($query, $filters)
     {
         return $filters->apply($query);

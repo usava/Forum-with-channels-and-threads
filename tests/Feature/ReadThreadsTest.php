@@ -42,8 +42,7 @@ class ReadThreadsTest extends TestCase
     {
         $reply = create(Reply::class, ['thread_id' => $this->thread->id]);
 
-        $this->get($this->thread->path())
-            ->assertSee($reply->body);
+        $this->assertDatabaseHas('replies', $reply->only('body'));
     }
 
     /** @test */
@@ -85,11 +84,23 @@ class ReadThreadsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_request_all_replies_foa_a_thread()
+    public function a_user_can_request_all_replies_fo_a_thread()
     {
         create(Reply::class, ['thread_id' => $this->thread->id]);
         $response = $this->getJson($this->thread->path() . '/replies')->json();
 
         $this->assertCount(1, $this->thread->replies);
+    }
+
+    /** @test */
+    public function a_user_can_filter_threads_by_unanswered_status()
+    {
+        $thread = create(Thread::class);
+        create(Reply::class, ['thread_id' => $thread->id], 2);
+
+
+        $response = $this->getJson('/threads?unanswered=1')->json();
+
+        $this->assertCount(1, $response);
     }
 }

@@ -2024,7 +2024,7 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     dataSet: function dataSet() {
       this.page = this.dataSet.current_page;
-      this.totalPages = this.dataSet.total;
+      this.totalPages = Math.ceil(this.dataSet.total / this.dataSet.per_page);
       this.prevUrl = this.dataSet.prev_page_url;
       this.nextUrl = this.dataSet.next_page_url;
     },
@@ -2099,6 +2099,7 @@ __webpack_require__.r(__webpack_exports__);
       var data = _ref.data;
       this.dataSet = data;
       this.items = data.data;
+      window.scrollTo(0, 0);
     },
     url: function url(page) {
       if (!page) {
