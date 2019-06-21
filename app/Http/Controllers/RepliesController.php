@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Channel;
 use App\Reply;
 use App\Thread;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -23,7 +24,12 @@ class RepliesController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('index');
+    }
+
+    public function index(Channel $channel, Thread $thread)
+    {
+        return $thread->replies()->paginate(20);
     }
 
     /**
@@ -38,13 +44,16 @@ class RepliesController extends Controller
             'body' => 'required'
         ]);
 
-        $thread->addReply([
+        $reply = $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id()
         ]);
 
-        return redirect($thread->path())
-            ->with('flash', 'Your reply has been sent');
+        if(request()->expectsJson()) {
+            return $reply->load('owner');
+        }
+
+        return back()->with('flash', 'Your reply has been sent');
     }
 
     /**
